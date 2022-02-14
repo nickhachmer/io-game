@@ -1,0 +1,44 @@
+{
+  "name": "io-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server/server.js",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "lint": "eslint --cache --ext .js,.jsx src/",
+    "dev": "cross-env NODE_ENV=development node src/server/server.js",
+    "start": "cross-env NODE_ENV=production node src/server/server.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "html-webpack-plugin": "^5.5.0",
+    "lodash": "^4.17.21",
+    "shortid": "^2.2.16",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1",
+    "throttle-debounce": "^3.0.1",
+    "webpack": "^5.68.0",
+    "webpack-dev-middleware": "^5.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.1.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.6.0",
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^26.1.0",
+    "jest": "^27.5.1",
+    "mini-css-extract-plugin": "^2.5.3",
+    "optimize-css-assets-webpack-plugin": "^6.0.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-merge": "^5.8.0"
+  }
+}
