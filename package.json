@@ -5,9 +5,9 @@
   "main": "src/server/server.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "lint": "eslint --cache --ext .js,.jsx src/",
-    "dev": "cross-env NODE_ENV=development node src/server/server.js",
-    "start": "cross-env NODE_ENV=production node src/server/server.js",
+    "lint": "eslint --cache --ext .ts src/",
+    "dev": "tsc && cross-env NODE_ENV=development node dist/server/server.js",
+    "start": "tsc && cross-env NODE_ENV=production node dist/server/server.js",
     "test": "jest"
   },
   "keywords": [],
@@ -27,6 +27,8 @@
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "cross-env": "^7.0.3",
@@ -38,6 +40,8 @@
     "jest": "^27.5.1",
     "mini-css-extract-plugin": "^2.5.3",
     "optimize-css-assets-webpack-plugin": "^6.0.1",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.5",
     "webpack-cli": "^4.9.2",
     "webpack-merge": "^5.8.0"
   }
