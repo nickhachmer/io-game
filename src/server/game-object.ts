@@ -2,19 +2,19 @@ export class GameObject {
     id: string;
     x: number;
     y: number;
-    dir: number;
-    speed: number;
 
-    constructor(id, x, y, dir, speed) {
+    constructor(id, x, y) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.dir = dir;
-        this.speed = speed;
     }
 
     serialize() {
-        return undefined;
+        return {
+            id: this.id,
+            x: this.x,
+            y: this.y 
+        };
     }
 
 }

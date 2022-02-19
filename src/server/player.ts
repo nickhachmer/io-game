@@ -2,18 +2,14 @@ import { GameObject } from './game-object';
 
 export class Player extends GameObject {
     name: string;
+    dir: number;
+    speed: number;
 
     constructor(id, x, y, dir, speed, name) {
-        super(id, x, y, dir, speed);
+        super(id, x, y);
         this.name = name
-    }
-
-    renderTrail() {
-        return undefined;
-    }
-
-    override serialize() {
-        return undefined;
+        this.dir = dir;
+        this.speed = speed;
     }
 
 }

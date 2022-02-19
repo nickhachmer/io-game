@@ -36,12 +36,12 @@ io.on('connection', (socket: Socket) => {
     console.log('Player connected!', socket.id);
     gm.addPlayer(socket);
 
-    io.on('disconnect', () => {
+    socket.on('disconnect', () => {
         gm.removePlayer(this);
     });
 
-    io.on('handleInputs', (input: Input) => {
-        gm.handleInput(input);
+    socket.on('handleInput', (input: Input) => {
+        gm.handleInput(socket, input);
     });
 });
 
