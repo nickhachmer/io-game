@@ -1,19 +1,22 @@
 import { Socket } from 'socket.io';
-import { Input } from '../shared/model';
+import { Direction, Input } from '../shared/model';
 import { Player } from './player';
 
 export class GameManager {
 
     private players = {}
     private sockets = {}
+    private shouldUpdate = true; // send updates to the client at 30hz instead of 60hz
+    private lastUpdate: number;  // keeps track of time of last update to calculate time difference
 
     constructor() {
-        setInterval(this.update.bind(this), 1000 / 30);
+        this.lastUpdate = Date.now();
+        setInterval(this.update.bind(this), 1000 / 60);
     }
 
     addPlayer(socket: Socket) {
         this.sockets[socket.id] = socket;
-        this.players[socket.id] = new Player(socket.id, 100, 100, 0, 10, "test")
+        this.players[socket.id] = new Player(socket.id, 100, 100, Direction.UP, 0.1, "test")
     }
 
     removePlayer(socket: Socket) {
@@ -22,34 +25,42 @@ export class GameManager {
 
     handleInput(socket: Socket, input: Input) {
         const player = this.players[socket.id];
-        const speed = player.speed;
         
-        if (input.up) {
-            player.y -= speed;
+        if (input.up && player.dir != Direction.DOWN) {
+            player.dir = Direction.UP;
         }
-        if (input.down) {
-            player.y += speed;
+        if (input.down && player.dir != Direction.UP) {
+            player.dir = Direction.DOWN;
         }
-        if (input.left) {
-            player.x -= speed;
+        if (input.left && player.dir != Direction.RIGHT) {
+            player.dir = Direction.LEFT;
         }
-        if (input.right) {
-            player.x += speed;
+        if (input.right && player.dir != Direction.LEFT) {
+            player.dir = Direction.RIGHT;
         }
     }
 
     update() {
-
+        const now = Date.now();
+        const dt = now - this.lastUpdate;
+        this.lastUpdate = now
         const gameUpdate = {
+            serverTime: now,
             players: []
         };
         
         Object.values(this.players).forEach((player: Player) => {
+            player.move(dt);
             gameUpdate.players.push(player.serialize());
         });
 
-        Object.values(this.sockets).forEach((socket: Socket) => {
-            socket.emit('serverUpdate', gameUpdate);
-        });
+        if (this.shouldUpdate) {
+            this.shouldUpdate = false;
+            Object.values(this.sockets).forEach((socket: Socket) => {
+                socket.emit('serverUpdate', gameUpdate);
+            });
+        } else {
+            this.shouldUpdate = true;
+        }
     }
 }

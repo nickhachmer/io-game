@@ -18,7 +18,7 @@ function render() {
 }
 
 export function startRendering() {
-    setInterval(render, 1000 / 30);
+    setInterval(render, 1000 / 60);
 }
 
 

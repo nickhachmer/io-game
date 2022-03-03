@@ -1,3 +1,4 @@
+import { throttle } from 'lodash';
 import io from 'socket.io-client';
 import { processUpdate } from './state';
 
@@ -23,6 +24,8 @@ export const connect = (onGameOver) => {
     });
 }
 
-export const sendInput = (inputData) => {
+// the use of throttle rate limits the sending of input updates so that it
+// doesn't spam the socket. (I have set it to 20ms)
+export const sendInput = throttle(20, (inputData) => {
   socket.emit('handleInput', inputData)
-}
+});
