@@ -2,9 +2,6 @@ import { Socket } from 'socket.io';
 import { Direction, Input } from '../shared/model';
 import { Player } from './player';
 
-const CANVAS_HEIGHT = 400;
-const CANVAS_WIDTH = 800;
-
 export class GameManager {
 
 
@@ -25,30 +22,30 @@ export class GameManager {
     }
 
     removePlayer(socket: Socket) {
-        delete this.players[socket.id]
+        delete this.sockets[socket.id];
+        delete this.players[socket.id];
     }
 
     handleInput(socket: Socket, input: Input) {
         const player = this.players[socket.id];
         
+        const position = { x: player.x, y: player.y };
+
         if (input.up && player.dir != Direction.DOWN) {
             player.dir = Direction.UP;
+            player.trail.push(position)
         }
         if (input.down && player.dir != Direction.UP) {
             player.dir = Direction.DOWN;
+            player.trail.push(position)
         }
         if (input.left && player.dir != Direction.RIGHT) {
             player.dir = Direction.LEFT;
+            player.trail.push(position)
         }
         if (input.right && player.dir != Direction.LEFT) {
             player.dir = Direction.RIGHT;
-        }
-    }
-
-    checkPlayerInBoundaries(player: Player): void {
-        if (player.x < 0 || player.x > CANVAS_WIDTH || 
-            player.y < 0 || player.y > CANVAS_HEIGHT) {
-                this.sockets[player.id].emit("gameOver");
+            player.trail.push(position)
         }
     }
 
@@ -61,10 +58,42 @@ export class GameManager {
             players: []
         };
         
+        // move players
+        const playerMoveLines = {};
         Object.values(this.players).forEach((player: Player) => {
-            this.checkPlayerInBoundaries(player);
+            playerMoveLines[player.id] = []
+            playerMoveLines[player.id].push({x: player.x, y: player.y});
             player.move(dt);
+            playerMoveLines[player.id].push({x: player.x, y: player.y});
             gameUpdate.players.push(player.serialize());
+        });
+
+        // detect collisions
+        Object.values(this.players).forEach((player: Player) => {
+            for (let i = 0; i < player.trail.length - 1; i++) {
+                if (player.trail[i].x == -1 || player.trail[i+1].x == -1) continue;
+                Object.values(this.players).forEach((p: Player) => {
+                    const points = playerMoveLines[p.id];
+                    if (this.intersects(
+                        points[0].x, points[0].y, 
+                        points[1].x, points[1].y, 
+                        player.trail[i].x, player.trail[i].y, 
+                        player.trail[i+1].x, player.trail[i+1].y)) {
+                        this.sockets[p.id].emit('gameOver');
+                    }
+                });
+            }
+            const i = player.trail.length - 1;
+            Object.values(this.players).forEach((p: Player) => {
+                const points = playerMoveLines[p.id];
+                if (this.intersects(
+                    points[0].x, points[0].y, 
+                    points[1].x, points[1].y, 
+                    player.trail[i].x, player.trail[i].y, 
+                    player.x, player.y)) {
+                    this.sockets[p.id].emit('gameOver');
+                }
+            });
         });
 
         if (this.shouldUpdate) {
@@ -74,6 +103,18 @@ export class GameManager {
             });
         } else {
             this.shouldUpdate = true;
+        }
+    }
+
+    private intersects(a,b,c,d,p,q,r,s) {
+        // credit https://stackoverflow.com/a/24392281
+        const det = (c - a) * (s - q) - (r - p) * (d - b);
+        if (det === 0) {
+            return false;
+        } else {
+            const lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
+            const gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+            return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
         }
     }
 }

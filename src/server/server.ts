@@ -37,7 +37,7 @@ io.on('connection', (socket: Socket) => {
     gm.addPlayer(socket);
 
     socket.on('disconnect', () => {
-        gm.removePlayer(this);
+        gm.removePlayer(socket);
     });
 
     socket.on('handleInput', (input: Input) => {

@@ -19,7 +19,7 @@ export const connect = (onGameOver) => {
         socket.on('gameOver', onGameOver);
 
         socket.on('disconnect', () => {
-            console.log('Disconnected from server');
+          console.log('Disconnected from server');
         })
     });
 }
