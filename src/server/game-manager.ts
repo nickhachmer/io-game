@@ -2,12 +2,17 @@ import { Socket } from 'socket.io';
 import { Direction, Input } from '../shared/model';
 import { Player } from './player';
 
+const CANVAS_HEIGHT = 400;
+const CANVAS_WIDTH = 800;
+
 export class GameManager {
+
 
     private players = {}
     private sockets = {}
     private shouldUpdate = true; // send updates to the client at 30hz instead of 60hz
     private lastUpdate: number;  // keeps track of time of last update to calculate time difference
+
 
     constructor() {
         this.lastUpdate = Date.now();
@@ -40,6 +45,13 @@ export class GameManager {
         }
     }
 
+    checkPlayerInBoundaries(player: Player): void {
+        if (player.x < 0 || player.x > CANVAS_WIDTH || 
+            player.y < 0 || player.y > CANVAS_HEIGHT) {
+                this.sockets[player.id].emit("gameOver");
+        }
+    }
+
     update() {
         const now = Date.now();
         const dt = now - this.lastUpdate;
@@ -50,6 +62,7 @@ export class GameManager {
         };
         
         Object.values(this.players).forEach((player: Player) => {
+            this.checkPlayerInBoundaries(player);
             player.move(dt);
             gameUpdate.players.push(player.serialize());
         });

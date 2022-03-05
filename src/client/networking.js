@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import { throttle } from 'throttle-debounce';
 import io from 'socket.io-client';
 import { processUpdate } from './state';
 
@@ -16,7 +16,7 @@ export const connect = (onGameOver) => {
 
         socket.on('serverUpdate', processUpdate);
 
-        socket.on('onGameOver', onGameOver);
+        socket.on('gameOver', onGameOver);
 
         socket.on('disconnect', () => {
             console.log('Disconnected from server');
@@ -27,5 +27,5 @@ export const connect = (onGameOver) => {
 // the use of throttle rate limits the sending of input updates so that it
 // doesn't spam the socket. (I have set it to 20ms)
 export const sendInput = throttle(20, (inputData) => {
-  socket.emit('handleInput', inputData)
+  socket.emit('handleInput', inputData);
 });
