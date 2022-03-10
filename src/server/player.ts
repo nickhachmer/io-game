@@ -2,11 +2,17 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../shared/constants';
 import { Direction, Point } from '../shared/model';
 import { GameObject } from './game-object';
 
+let colorIdx = 0;
+const colors = ["green", "blue", "yellow", "black", "grey", "purple"];
+
 export class Player extends GameObject {
     name: string;
     dir: Direction;
     speed: number;
     trail: Point[];
+    ready: boolean;
+    color: string;
+    lost: boolean;
 
     constructor(id, x, y, dir, speed, name) {
         super(id, x, y);
@@ -14,6 +20,14 @@ export class Player extends GameObject {
         this.dir = dir;
         this.speed = speed;
         this.trail = [{x, y}];
+        this.ready = false;
+        this.lost = false;
+
+        this.color = colors[colorIdx];
+        colorIdx += 1;
+        if (colorIdx >= colors.length) {
+            colorIdx = 0
+        }
     }
 
     move(dt: number): void {
@@ -61,6 +75,7 @@ export class Player extends GameObject {
             y: this.y,
             dir: this.dir,
             trail: this.trail,
+            color: this.color,
         };
     }
 

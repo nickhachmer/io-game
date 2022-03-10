@@ -18,7 +18,7 @@ function render() {
 
     // render players
     gameState.players?.forEach(player => {
-        context.strokeStyle = 'green';
+        context.strokeStyle = player.color;
         for (let i = 0; i < player.trail.length - 1; i++) {
             if (player.trail[i].x == -1 || player.trail[i+1].x == -1) continue;
             context.moveTo(player.trail[i].x, player.trail[i].y);
@@ -37,8 +37,14 @@ function render() {
     });
 }
 
+let renderInterval;
 export function startRendering() {
-    setInterval(render, 1000 / 60);
+    clearInterval(renderInterval);
+    renderInterval = setInterval(render, 1000 / 60);
+}
+
+export function stopRendering() {
+    clearInterval(renderInterval);
 }
 
 

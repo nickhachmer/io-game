@@ -34,7 +34,15 @@ const gm = new GameManager();
 // Listen for socket.io connections
 io.on('connection', (socket: Socket) => {
     console.log('Player connected!', socket.id);
-    gm.addPlayer(socket);
+
+    socket.on('joinGame', (username) => {
+        gm.addPlayer(socket, username);
+        gm.emitPlayers();
+    });
+
+    socket.on('ready', () => {
+        gm.playerReady(socket);
+    });
 
     socket.on('disconnect', () => {
         gm.removePlayer(socket);

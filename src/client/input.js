@@ -33,3 +33,7 @@ function processKey(event) {
 export function startCapturingInput() {
     window.addEventListener('keydown', processKey);
 }
+
+export function stopCapturingInput() {
+    window.removeEventListener('keydown', processKey);
+}

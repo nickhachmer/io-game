@@ -1,5 +1,5 @@
 
-const RENDER_DELAY = 50; // 100 ms
+const RENDER_DELAY = 10; // 100 ms
 const gameUpdates = [];
 
 let gameStartTime = 0;

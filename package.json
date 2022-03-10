@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "lint": "eslint --cache --ext .ts src/",
-    "dev": "tsc && cross-env NODE_ENV=development node dist/server/server.js",
+    "dev": "cross-env NODE_ENV=development node dist/server/server.js",
     "start": "tsc && cross-env NODE_ENV=production node dist/server/server.js",
     "test": "jest"
   },
