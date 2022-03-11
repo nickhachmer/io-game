@@ -1,6 +1,7 @@
 import { startCapturingInput, stopCapturingInput } from "./input";
 import { connect, joinGame, ready } from "./networking";
 import { startRendering, stopRendering } from "./render";
+import { resetState } from "./state";
 
 import './css/main.css';
 
@@ -35,6 +36,7 @@ joinBtn.addEventListener("click", () => {
 export const reset = () => {
     stopCapturingInput();
     stopRendering();
+    resetState();
     counter.innerHTML = "";
     counter.classList.remove("hidden");
     lobby.classList.remove("hidden");
@@ -46,6 +48,8 @@ export const startGame = () => {
     lobby.classList.add("hidden");
     counter.classList.add("hidden");
     canvas.classList.remove("hidden");
+    lostMessage.classList.add("hidden");
+    winMessage.classList.add("hidden");
     console.log("stating ----------");
     startCapturingInput();
     startRendering();

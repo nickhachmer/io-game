@@ -19,7 +19,7 @@ export class Player extends GameObject {
         this.name = name
         this.dir = dir;
         this.speed = speed;
-        this.trail = [{x, y}];
+        this.trail = [{x: x, y: y}];
         this.ready = false;
         this.lost = false;
 
@@ -30,42 +30,47 @@ export class Player extends GameObject {
         }
     }
 
-    move(dt: number): void {
+    move(dt: number): boolean {
         switch(this.dir) {
             case Direction.UP: this.y -= (this.speed * dt); break;
             case Direction.DOWN: this.y += (this.speed * dt); break;
             case Direction.LEFT: this.x -= (this.speed * dt); break;
             case Direction.RIGHT: this.x += (this.speed * dt); break;
         }
-        this.checkPlayerInBoundaries();
+        return this.checkPlayerInBoundaries();
     }
 
-    private checkPlayerInBoundaries(): void {
+    private checkPlayerInBoundaries(): boolean {
         if (this.x < 0) {
-            this.trail.push({x: 1, y: this.y})
-            this.trail.push({x: -1, y: -1})
+            this.trail.push({x: 1, y: this.y});
+            this.trail.push({x: -1, y: -1});
 
-            this.x = CANVAS_WIDTH-1
-            this.trail.push({x: CANVAS_WIDTH-1, y: this.y})
+            this.x = CANVAS_WIDTH-1;
+            this.trail.push({x: CANVAS_WIDTH-1, y: this.y});
+            return true;
         } else if (this.x >= CANVAS_WIDTH) {
-            this.trail.push({x: CANVAS_WIDTH-1, y: this.y})
-            this.trail.push({x: -1, y: -1})
+            this.trail.push({x: CANVAS_WIDTH-1, y: this.y});
+            this.trail.push({x: -1, y: -1});
 
-            this.x = 1
-            this.trail.push({x: 1, y: this.y})
+            this.x = 1;
+            this.trail.push({x: 1, y: this.y});
+            return true;
         } else if (this.y < 0) {
-            this.trail.push({x: this.x, y: 1})
-            this.trail.push({x: -1, y: -1})
+            this.trail.push({x: this.x, y: 1});
+            this.trail.push({x: -1, y: -1});
 
-            this.y = CANVAS_HEIGHT-1
-            this.trail.push({x: this.x, y: CANVAS_HEIGHT-1})
+            this.y = CANVAS_HEIGHT-1;
+            this.trail.push({x: this.x, y: CANVAS_HEIGHT-1});
+            return true;
         } else if (this.y >= CANVAS_HEIGHT) {
-            this.trail.push({x: this.x, y: CANVAS_HEIGHT-1})
-            this.trail.push({x: -1, y: -1})
+            this.trail.push({x: this.x, y: CANVAS_HEIGHT-1});
+            this.trail.push({x: -1, y: -1});
 
             this.y = 1
             this.trail.push({x: this.x, y: 1})
+            return true;
         }
+        return false;
     }
 
     override serialize() {

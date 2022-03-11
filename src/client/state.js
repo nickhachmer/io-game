@@ -10,6 +10,12 @@ export function initState() {
     firstServerTimeStamp = 0;
 }
 
+export function resetState() {
+    gameStartTime = 0;
+    firstServerTimeStamp = 0;
+    gameUpdates.slice(0, 0);
+}
+
 export function processUpdate(update) {
     if (!firstServerTimeStamp) {
         firstServerTimeStamp = update.serverTime;

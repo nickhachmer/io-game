@@ -76,13 +76,15 @@ export class GameManager {
         this.ready = 0;
 
         // reset player positions
-        let counter = 1;
+        let c = 1;
         Object.values(this.players).forEach((player: Player) => {
-            this.players[player.id].x = counter*100;
+            this.players[player.id].x = c*100;
             this.players[player.id].y = 100;
             this.players[player.id].dir = Direction.UP;
             this.players[player.id].ready = false;
-            counter += 1;
+            this.players[player.id].lost = false;
+            this.players[player.id].trail = [{x: (c*100), y: 100}]
+            c += 1;
         });
 
         Object.values(this.sockets).forEach((socket: Socket) => {
@@ -94,6 +96,8 @@ export class GameManager {
     handleInput(socket: Socket, input: Input) {
         const player = this.players[socket.id];
         
+        if (!player) return;
+
         const position = { x: player.x, y: player.y };
 
         if (input.up && player.dir != Direction.DOWN) {
@@ -129,8 +133,12 @@ export class GameManager {
             if (!player.lost) {
                 playerMoveLines[player.id] = []
                 playerMoveLines[player.id].push({x: player.x, y: player.y});
-                player.move(dt);
-                playerMoveLines[player.id].push({x: player.x, y: player.y});
+                if (player.move(dt)) {
+                    playerMoveLines[player.id][0].x = -1;
+                } else {
+                    playerMoveLines[player.id].push({x: player.x, y: player.y});
+                }
+                
             }
             gameUpdate.players.push(player.serialize());
         });
@@ -140,7 +148,7 @@ export class GameManager {
             for (let i = 0; i < player.trail.length - 1; i++) {
                 if (player.trail[i].x == -1 || player.trail[i+1].x == -1) continue;
                 Object.values(this.players).forEach((p: Player) => {
-                    if (!p.lost) {
+                    if (!p.lost && playerMoveLines[p.id][0].x != -1) {
                         const points = playerMoveLines[p.id];
                         if (this.intersects(
                             points[0].x, points[0].y, 
@@ -155,7 +163,7 @@ export class GameManager {
             }
             const i = player.trail.length - 1;
             Object.values(this.players).forEach((p: Player) => {
-                if (!p.lost) {
+                if (!p.lost && playerMoveLines[p.id][0].x != -1) {
                     const points = playerMoveLines[p.id];
                     if (this.intersects(
                         points[0].x, points[0].y, 
@@ -178,10 +186,12 @@ export class GameManager {
             }            
         });
 
-        if (remaining == 1) {
-            this.sockets[remainingPlayer.id].emit('gameOver', true);
+        if (remaining <= 1) {
+            if (remaining == 1) {
+                this.sockets[remainingPlayer.id].emit('gameOver', true);
+            }
             this.reset();            
-        }
+        } 
 
         if (this.shouldUpdate) {
             this.shouldUpdate = false;
