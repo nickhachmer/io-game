@@ -32,3 +32,7 @@ There are probably quite a few bugs in this - its just an MVP and I made it as f
 - There is only one lobby for everyone, which is not great.
 - There is no validation on the usernames
 - leaving the game (refreshing the page) and joining back is not well test behavior and would not recommend doing that.
+
+# Screen Shots
+![alt text](https://github.com/nickhachmer/io-game/tree/master/screenshots/lobby.png?raw=true)
+![alt text](https://github.com/nickhachmer/io-game/tree/master/screenshots/game.png?raw=true)
